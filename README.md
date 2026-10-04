@@ -1,6 +1,6 @@
 # pixelos-ota
 
-OTA feed and changelogs for **PixelOS on Xiaomi 13 Ultra (fuxi)**.
+OTA feed and changelogs for **PixelOS on Xiaomi 13 (fuxi)**.
 
 Consumed by the PixelOS Updater app (`net.pixelos.ota`). The app builds its URLs from two
 resources in `packages/apps/Updater/app/src/main/res/values/strings.xml`, which in this fork

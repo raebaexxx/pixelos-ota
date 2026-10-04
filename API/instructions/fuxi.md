@@ -1,6 +1,6 @@
-# Install PixelOS on Xiaomi 13 Ultra (fuxi)
+# Install PixelOS on Xiaomi 13 (fuxi)
 
-Device codename: `fuxi` (Xiaomi 13 Ultra / Redmi K60 Pro)
+Device codename: `fuxi` (Xiaomi 13, models 2211133G / 2211133C)
 
 ## Clean flash
 
