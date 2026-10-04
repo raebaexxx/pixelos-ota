@@ -1,11 +1,15 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
-**Build date:** 03.10.2026
+**Build date:** 04.10.2026
 **Version:** fuxi-17.0-20261003
 **Platform:** Android 17 (API 37)
 **Upstream:** `xiaomi-sm8550-devs/android_device_xiaomi_sm8550-common` @ `lineage-24.0`
 
 ---
+
+04.10.2026: add ota updates
+
+03.10.2026:
 
 ## Platform update
 
