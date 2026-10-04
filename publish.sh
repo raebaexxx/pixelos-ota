@@ -25,6 +25,7 @@ FEED_CL="API/updater/changelogs/fuxi.md"
 GENERATOR="$HOME/roms/pixelos/packages/apps/Updater/tools/pixelos_feed.py"
 VERSION="17.0"
 KEEP_HISTORY=5
+ROM_TREE="${ROM_TREE:-$HOME/roms/pixelos}"
 
 die() { echo "Error: $*" >&2; exit 1; }
 info() { echo "==> $*"; }
@@ -38,6 +39,8 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --version) VERSION="$2"; shift 2 ;;
         --keep)    KEEP_HISTORY="$2"; shift 2 ;;
+        --changelog) CHANGELOG_SRC="$2"; shift 2 ;;
+        --no-changelog) SKIP_CHANGELOG=1; shift ;;
         *) die "unknown option: $1" ;;
     esac
 done
@@ -52,11 +55,29 @@ case "$SF_URL" in
     *) die "the URL must be HTTPS (enforced by the Updater)" ;;
 esac
 
-[ -f "$FEED_REPO/$FEED_CL" ] || cp /dev/null "$FEED_REPO/$FEED_CL"
-
 info "feed repo   : $FEED_REPO ($FEED_BRANCH)"
 info "ota package : $OTA_ZIP ($(du -h "$OTA_ZIP" | cut -f1))"
 info "public url  : $SF_URL"
+
+# ---- changelog -------------------------------------------------------------
+# The Updater resolves the changelog from {branch}/{device} only, with no
+# per-build selector, so every entry in the feed points at the same file.
+# Publish whichever release notes belong to the newest build and keep them
+# in sync with the feed.
+if [ -z "${SKIP_CHANGELOG:-}" ]; then
+    if [ -z "${CHANGELOG_SRC:-}" ]; then
+        CHANGELOG_SRC="$(ls -t "$ROM_TREE"/changelog_*.md 2>/dev/null | head -1 || true)"
+    fi
+    if [ -n "${CHANGELOG_SRC:-}" ] && [ -f "$CHANGELOG_SRC" ]; then
+        mkdir -p "$(dirname "$FEED_REPO/$FEED_CL")"
+        cp "$CHANGELOG_SRC" "$FEED_REPO/$FEED_CL"
+        info "changelog   : $(basename "$CHANGELOG_SRC") -> $FEED_CL ($(wc -c < "$FEED_REPO/$FEED_CL") bytes)"
+    else
+        info "changelog   : not updated, none found under $ROM_TREE/changelog_*.md"
+    fi
+else
+    info "changelog   : skipped (--no-changelog)"
+fi
 
 # ---- pretty filename -------------------------------------------------------
 # The generator copies the local archive name into "filename", which is what
@@ -97,9 +118,17 @@ if not isinstance(new, list) or len(new) != 1:
 
 entry = new[0]
 digest = entry["files"][0]["sha256"]
+display = entry["files"][0]["filename"]
 
-# drop any previous entry pointing at the same artifact, then prepend
-current = [e for e in current if e.get("files", [{}])[0].get("sha256") != digest]
+# Drop any previous entry for the same artifact. Match on filename as well as
+# digest: repackaging the same build produces a new sha256 and a slightly
+# different size, and leaving both in the feed would advertise two different
+# packages under the same name.
+current = [
+    e for e in current
+    if e.get("files", [{}])[0].get("sha256") != digest
+    and e.get("files", [{}])[0].get("filename") != display
+]
 current.insert(0, entry)
 current = current[:keep]
 
@@ -113,11 +142,10 @@ PY
 
 # ---- validate --------------------------------------------------------------
 info "validating"
-# Validate against the symlink, not the original archive: the checker
-# compares the "filename" field against the artifact basename, and the
-# display name is deliberately the release name rather than the internal
-# custom_fuxi-ota.zip.
-python3 "$GENERATOR" validate-ota "$FEED_REPO/$FEED_PATH" --artifact "$TMP_LINK_DIR/$DISPLAY_NAME"
+# The official checker compares a single feed entry against the artifact and
+# refuses a feed holding several, so validate the freshly generated entry in
+# isolation and check the merged feed separately below.
+python3 "$GENERATOR" validate-ota "$TMP_LINK_DIR/new.json" --artifact "$TMP_LINK_DIR/$DISPLAY_NAME"
 
 info "validating JSON shape"
 python3 - "$FEED_REPO/$FEED_PATH" <<'PY'
