@@ -3,10 +3,11 @@
 # Publish a PixelOS OTA update for fuxi.
 #
 #   1. verifies the OTA package and the Updater tooling
-#   2. generates the feed entry with the official generator
-#   3. merges it into the existing feed (newest first, keeps history)
-#   4. validates the result
-#   5. commits and pushes
+#   2. fetches origin and integrates remote work into the feed branch
+#   3. generates the feed entry with the official generator
+#   4. merges it into the existing feed (newest first, keeps history)
+#   5. validates the result
+#   6. commits and pushes
 #
 # Usage:
 #   ./publish.sh <ota-zip> <sourceforge-url> [--version 17.0]
@@ -58,6 +59,48 @@ esac
 info "feed repo   : $FEED_REPO ($FEED_BRANCH)"
 info "ota package : $OTA_ZIP ($(du -h "$OTA_ZIP" | cut -f1))"
 info "public url  : $SF_URL"
+
+# ---- sync with the feed repo ----------------------------------------------
+# The feed is also edited from other machines and from the GitHub web editor
+# (changelog), so origin regularly moves ahead of this clone. Integrate before
+# touching any file: the merge below has to run against the current feed, and a
+# push built on a stale base is rejected.
+cd "$FEED_REPO"
+git checkout -q "$FEED_BRANCH"
+
+UPSTREAM="origin/$FEED_BRANCH"
+info "fetching $UPSTREAM"
+git fetch -q origin "+refs/heads/$FEED_BRANCH:refs/remotes/origin/$FEED_BRANCH" \
+    || die "cannot reach origin, aborting before any local change is made"
+git rev-parse --verify --quiet "$UPSTREAM" >/dev/null \
+    || die "branch $FEED_BRANCH does not exist on origin"
+
+AHEAD="$(git rev-list --count "$UPSTREAM..HEAD")"
+BEHIND="$(git rev-list --count "HEAD..$UPSTREAM")"
+
+if [ "$BEHIND" -gt 0 ]; then
+    DIRTY="$(git status --porcelain)"
+    if [ -n "$DIRTY" ]; then
+        info "uncommitted local changes, they are stashed across the rebase:"
+        printf '%s\n' "$DIRTY" | sed 's/^/    /'
+    fi
+
+    info "integrating remote work: $AHEAD local commit(s), $BEHIND remote commit(s)"
+    git rebase --autostash "$UPSTREAM" \
+        || { git rebase --abort || true; die "conflict while rebasing onto $UPSTREAM, resolve it in $FEED_REPO by hand"; }
+    if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+        die "restoring your local changes produced conflicts (see 'git stash list'), resolve them in $FEED_REPO"
+    fi
+    AHEAD="$(git rev-list --count "$UPSTREAM..HEAD")"
+fi
+
+# Anything already committed locally still has to reach the remote, so only add
+# the feed files. `git add -A` would sweep unrelated edits into the publish
+# commit.
+PUBLISH_PATHS=("$FEED_PATH")
+if [ -f "$FEED_CL" ]; then
+    PUBLISH_PATHS+=("$FEED_CL")
+fi
 
 # ---- changelog -------------------------------------------------------------
 # The Updater resolves the changelog from {branch}/{device} only, with no
@@ -162,25 +205,30 @@ print("    ok")
 PY
 
 # ---- commit and push -------------------------------------------------------
-cd "$FEED_REPO"
-git checkout -q "$FEED_BRANCH"
-git add -A
+git add -- "${PUBLISH_PATHS[@]}"
 
-if git diff --cached --quiet; then
-    info "nothing to publish, feed already up to date"
-    exit 0
-fi
-
-STAMP="$(date -u "+%Y-%m-%d %H:%M UTC")"
-git -c user.name="${GIT_NAME:-raebaexxx}" \
-    -c user.email="${GIT_EMAIL:-vadimfeda@yandex.ru}" \
-    commit -q -m "Publish OTA feed entry ${DISPLAY_NAME}
+if git diff --cached --quiet -- "${PUBLISH_PATHS[@]}"; then
+    # The regenerated entry matched what is already committed. That says nothing
+    # about whether the local commits are on the remote, so compare against the
+    # upstream instead of exiting silently.
+    if [ "$AHEAD" -eq 0 ]; then
+        info "nothing to publish, feed already up to date"
+        exit 0
+    fi
+    info "feed unchanged, $AHEAD local commit(s) still missing from $UPSTREAM"
+else
+    STAMP="$(date -u "+%Y-%m-%d %H:%M UTC")"
+    git -c user.name="${GIT_NAME:-raebaexxx}" \
+        -c user.email="${GIT_EMAIL:-vadimfeda@yandex.ru}" \
+        commit -q -m "Publish OTA feed entry ${DISPLAY_NAME}
 
 Generated with tools/pixelos_feed.py and validated against the
 package. Published ${STAMP}."
+fi
 
-info "pushing"
-git push -q origin "$FEED_BRANCH"
+info "pushing to $UPSTREAM"
+git push -q origin "$FEED_BRANCH" \
+    || die "push rejected; run 'git -C $FEED_REPO fetch origin $FEED_BRANCH' and re-run"
 
 info "done: https://github.com/$(git config --get remote.origin.url | sed 's|.*github.com/||; s|\.git$||')/blob/$FEED_BRANCH/$FEED_PATH"
 git log --oneline -1
