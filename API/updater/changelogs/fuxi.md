@@ -1,6 +1,8 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
 05.10.2026:
+- Fix silent LHDC audio over Bluetooth (headphones negotiated LHDCv5 but played no sound)
+- Fix silent AC-3, E-AC-3 and AC-4 audio
 - Keep recovery and init_boot out of OTA updates
 - powerhint: Add lowest OPP to CPU min frequency powerhint lists
 - Allow device-specific media profiles
