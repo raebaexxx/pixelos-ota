@@ -1,8 +1,13 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
----
+05.10.2026:
+- Keep recovery and init_boot out of OTA updates
+- powerhint: Add lowest OPP to CPU min frequency powerhint lists
+- Allow device-specific media profiles
+- Import WiFi Display (WFD) system blobs from A171WEH.20
 
-04.10.2026: add ota updates
+04.10.2026: 
+- Add OTA updates
 
 03.10.2026:
 - Switch to Vulkan UI renderer
