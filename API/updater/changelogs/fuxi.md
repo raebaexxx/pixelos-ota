@@ -1,6 +1,6 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
-05.10.2026:
+06.10.2026:
 - Fix Dolby Vision recording (the camera crashed or wrote nothing with Dolby Vision enabled)
 - Fix silent AC-3, E-AC-3 and AC-4 audio
 - Keep recovery and init_boot out of OTA updates
