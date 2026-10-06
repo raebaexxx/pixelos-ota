@@ -3,6 +3,7 @@
 06.10.2026-2:
 - Update kernel to current LineageOS source, includes September 2026 security patches
 - Remove PASR (Power-Aware Suspend/Resume)
+- powerhint: Add lowest OPP to GPU min frequency powerhint lists
 
 06.10.2026:
 - Fix Dolby Vision recording (the camera crashed or wrote nothing with Dolby Vision enabled)
