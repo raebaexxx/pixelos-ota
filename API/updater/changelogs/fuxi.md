@@ -3,6 +3,8 @@
 06.10.2026-3:
 - Switch to official release keys, so builds can be verified as authentic
 - Install this update manually: devices on a previous test-keys build cannot take it over the air
+- Fix the Updater reporting an update check error instead of checking, on devices that installed over a build with different signing keys
+- Devices hitting this can run "adb shell cmd package uninstall-system-updates net.pixelos.ota", or format data
 - powerhint: Add lowest OPP to GPU min frequency powerhint lists
 
 06.10.2026-2:
