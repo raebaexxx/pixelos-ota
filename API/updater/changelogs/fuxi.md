@@ -1,6 +1,8 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
 06.10.2026-2:
+- Switch to official release keys, so builds can be verified as authentic
+- Install this update manually: devices on a previous test-keys build cannot take it over the air
 - Update kernel to current LineageOS source, includes September 2026 security patches
 - Remove PASR (Power-Aware Suspend/Resume)
 - powerhint: Add lowest OPP to GPU min frequency powerhint lists
