@@ -2,7 +2,7 @@
 #
 # Publish a PixelOS OTA update for fuxi.
 #
-#   1. verifies the OTA package and the Updater tooling
+#   1. verifies the OTA package, the URL and the Updater tooling
 #   2. fetches origin and integrates remote work into the feed branch
 #   3. generates the feed entry with the official generator
 #   4. merges it into the existing feed (newest first, keeps history)
@@ -10,7 +10,12 @@
 #   6. commits and pushes
 #
 # Usage:
-#   ./publish.sh <ota-zip> <sourceforge-url> [--version 17.0]
+#   ./publish.sh <ota-zip> <sourceforge-url> [--version 17.0] [--skip-url-check]
+#
+# The URL is fetched with a HEAD request before anything is published, so a
+# wrong path or filename aborts the run instead of advertising an update the
+# Updater cannot download. --skip-url-check is the escape hatch for a file that
+# SourceForge has not finished propagating.
 #
 # Example:
 #   ./publish.sh \
@@ -42,6 +47,7 @@ while [ $# -gt 0 ]; do
         --keep)    KEEP_HISTORY="$2"; shift 2 ;;
         --changelog) CHANGELOG_SRC="$2"; shift 2 ;;
         --no-changelog) SKIP_CHANGELOG=1; shift ;;
+        --skip-url-check) SKIP_URL_CHECK=1; shift ;;
         *) die "unknown option: $1" ;;
     esac
 done
@@ -55,6 +61,52 @@ case "$SF_URL" in
     https://*) ;;
     *) die "the URL must be HTTPS (enforced by the Updater)" ;;
 esac
+
+# No local check can catch a wrong path or filename in the URL: the generator
+# copies it into the feed verbatim, and the Updater then advertises an update
+# it cannot download. Ask the server before anything is published.
+if [ -z "${SKIP_URL_CHECK:-}" ]; then
+    info "checking that the URL is live"
+    HEADERS="$(curl -sSIL --retry 3 --retry-delay 3 \
+        --connect-timeout 20 --max-time 180 "$SF_URL" 2>/dev/null || true)"
+
+    # curl -L prints one header block per redirect hop, so the answer is the
+    # last status and the last content-length.
+    CODE="$(printf '%s\n' "$HEADERS" | awk '/^HTTP\// {c=$2} END{print c+0}')"
+    CLEN="$(printf '%s\n' "$HEADERS" \
+        | awk 'BEGIN{IGNORECASE=1} /^content-length:/ {v=$2}
+               END{gsub(/\r/,"",v); print v+0}')"
+
+    case "$CODE" in
+        200) ;;
+        404|403)
+            die "the server has no file at this URL (HTTP $CODE):
+         $SF_URL
+       The path and the filename must match the upload exactly. If the file was
+       only just uploaded, SourceForge may still be propagating it; otherwise
+       re-check the name you used when uploading. Override with --skip-url-check." ;;
+        0)
+            die "cannot reach $SF_URL (curl failed). Check connectivity, or pass --skip-url-check." ;;
+        *)
+            die "unexpected HTTP $CODE for $SF_URL. Not publishing. Override with --skip-url-check." ;;
+    esac
+
+    # A reachable file of the wrong size means the URL points at a different
+    # build, which is just as broken as a 404.
+    LOCAL_SIZE="$(stat -c%s "$OTA_ZIP")"
+    if [ "${CLEN:-0}" -gt 0 ] 2>/dev/null; then
+        if [ "$CLEN" -ne "$LOCAL_SIZE" ]; then
+            die "size mismatch, the URL points at a different file:
+       local : $LOCAL_SIZE bytes ($(basename "$OTA_ZIP"))
+       remote: $CLEN bytes
+       Expected the public name to be the uploaded package. Override with
+       --skip-url-check if you know this is intentional."
+        fi
+        info "  server: HTTP $CODE, $CLEN bytes (matches the local package)"
+    else
+        info "  server: HTTP $CODE, size not reported, skipped the size check"
+    fi
+fi
 
 info "feed repo   : $FEED_REPO ($FEED_BRANCH)"
 info "ota package : $OTA_ZIP ($(du -h "$OTA_ZIP" | cut -f1))"
