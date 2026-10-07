@@ -1,5 +1,11 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
+07.10.2026:
+- Update vendor blobs to OS3.0.307.0.WMCCNXM
+- Add HDR flash support on the rear camera
+- Raise the camera memory reclaim thresholds, so it stops dropping its buffer when memory is tight
+- Fix haptic feedback replaying ringtone patterns, which made light feedback about twice as loud as intended
+
 06.10.2026-3:
 - Switch to official release keys, so builds can be verified as authentic
 - Install this update manually: devices on a previous test-keys build cannot take it over the air
