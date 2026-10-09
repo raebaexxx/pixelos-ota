@@ -1,5 +1,8 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
+09.10.2026:
+- Fix one-way calls on speakerphone, the other party could not hear you
+
 07.10.2026:
 - Update vendor blobs to OS3.0.307.0.WMCCNXM
 - Add HDR flash support on the rear camera
