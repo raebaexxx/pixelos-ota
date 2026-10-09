@@ -2,6 +2,8 @@
 
 09.10.2026:
 - Fix one-way calls on speakerphone, the other party could not hear you
+- Fix no sound from Bluetooth headphones on headsets that support the LHDC codec
+- Remove LHDC from the Bluetooth codec list, this device has no encoder for it
 
 07.10.2026:
 - Update vendor blobs to OS3.0.307.0.WMCCNXM
