@@ -1,5 +1,8 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
+13.10.2026:
+- Add KernelSU Next + SuSFS
+
 09.10.2026-2:
 - Fix no sound from Bluetooth headphones on headsets that support the LHDC codec
 - Remove LHDC from the Bluetooth codec list, this device has no encoder for it
