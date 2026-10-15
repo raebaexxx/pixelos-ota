@@ -1,6 +1,9 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
 13.10.2026:
+- Update KernelSU Next + SuSFS
+
+13.10.2026:
 - Add KernelSU Next + SuSFS
 
 09.10.2026-2:
