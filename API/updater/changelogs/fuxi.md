@@ -2,6 +2,7 @@
 
 20.10.2026:
 - Fix Dolby Vision video playback: recordings play again, and the phone no longer slows to a crawl while watching them
+- Fix the phone heating up and draining the battery while playing music: the Dolby audio effects kept three CPU cores busy at all times, they are disabled for now (the Dolby Atmos effects are unavailable as a result)
 
 19.10.2026:
 - Rework the Dolby stack: Dolby Atmos and Dolby audio in a dedicated repository, Dolby Vision with the camera
