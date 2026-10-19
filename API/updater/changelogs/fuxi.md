@@ -1,8 +1,10 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
+20.10.2026:
+- Fix Dolby Vision video playback: recordings play again, and the phone no longer slows to a crawl while watching them
+
 19.10.2026:
 - Rework the Dolby stack: Dolby Atmos and Dolby audio in a dedicated repository, Dolby Vision with the camera
-- Dolby Vision: declare the Dolby decoders as well, so playback goes through the Dolby components
 - Fix the Dolby and Qualcomm Codec2 services crashing on Android 17
 - Ship the complete media codec configuration, some codecs were unavailable without it
 - Camera: restore the quick camera HAL
