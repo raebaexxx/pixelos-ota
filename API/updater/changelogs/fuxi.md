@@ -1,5 +1,26 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
+19.10.2026:
+- Rework the Dolby stack: Dolby Atmos and Dolby audio in a dedicated repository, Dolby Vision with the camera
+- Dolby Vision: declare the Dolby decoders as well, so playback goes through the Dolby components
+- Fix the Dolby and Qualcomm Codec2 services crashing on Android 17
+- Ship the complete media codec configuration, some codecs were unavailable without it
+- Camera: restore the quick camera HAL
+- Camera: fix recorded videos never being saved, they stayed as ".pending-" files and did not appear in the gallery
+- Camera: the thumbnail button now opens your own gallery app (Google Photos and others) instead of failing
+- Fix the incoming caller number not being parsed on VoLTE and VoWiFi
+- Fingerprint: use the legacy enrollment screen, the "Do it later" button overlapped the sensor
+- Enable Always On Display wallpapers
+- Use the stock shape for the rounded corners of the display
+- Update the build fingerprint and attestation properties to the current global build
+- Spoof the stock brand and product properties
+- Add alternative captive portal check URLs for regions without access to Google
+- Report OEM unlocking as unsupported
+- Remove the unused mtd, mfidoca and tidaservice services
+- Update the kernel to the current LineageOS source (Linux 5.15.220)
+- Update to the October 2026 security patch level
+- OTA updates now include init_boot
+
 15.10.2026:
 - Update KernelSU Next + SuSFS
 
