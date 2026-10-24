@@ -1,5 +1,8 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
+24.10.2026:
+- https://blog.pixelos.net/blogs/2026-10-19-October-Update
+
 20.10.2026:
 - Dolby Atmos: new app with a redesigned interface, AutoEQ profiles, per-app profiles, per-device settings memory and preset import/export
 - Dolby Atmos: the app has been replaced, so its settings start from defaults
