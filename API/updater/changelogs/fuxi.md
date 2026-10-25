@@ -1,5 +1,10 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
+25.10.2026:
+- Bluetooth: restore LHDC support, falling back to the software encoder when the hardware path is unavailable
+- Fix the rounded corner overlay to match the stock display shape
+- Remove the XiaomiParts app and DSP volume synchronizer
+
 24.10.2026:
 - https://blog.pixelos.net/blogs/2026-10-19-October-Update
 
