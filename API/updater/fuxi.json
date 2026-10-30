@@ -1,15 +1,15 @@
 [
   {
-    "datetime": 1792901758,
+    "datetime": 1793326715,
     "files": [
       {
-        "filename": "PixelOS_fuxi-17.0-20261025-0418.zip",
+        "filename": "PixelOS_fuxi-17.0-20261030-0221.zip",
         "os_patch_level": "2026-10-01",
         "os_sdk_level": 37,
-        "sha256": "fff65f566f2b8b904913c225d19dd59171fd58923d64a17eeb7e9262c5cd868c",
-        "size": 3539419378,
-        "url": "https://downloads.sourceforge.net/project/rbxfuxiroms/PixelOS/Android%2017/25.10.2026/PixelOS_fuxi-17.0-20261025-0418.zip",
-        "ota_property_files": "payload_metadata.bin:4641:201426,payload.bin:4641:3539411435,payload_properties.txt:3539416134:156,apex_info.pb:2179:1448,care_map.pb:3674:920,metadata:69:677,metadata.pb:814:1317                        "
+        "sha256": "3a325f892dbeafc147357af28f9d74d3299bc83e11fa1809f9b4d6f9c2cb8264",
+        "size": 3543414820,
+        "url": "https://downloads.sourceforge.net/project/rbxfuxiroms/PixelOS/Android%2017/30.10.2026/PixelOS_fuxi-17.0-20261030-0221.zip",
+        "ota_property_files": "payload_metadata.bin:4641:201822,payload.bin:4641:3543406877,payload_properties.txt:3543411576:156,apex_info.pb:2179:1448,care_map.pb:3674:920,metadata:69:677,metadata.pb:814:1317                        "
       }
     ],
     "type": "ci",
