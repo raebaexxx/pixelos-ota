@@ -1,5 +1,13 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
+30.10.2026:
+- KernelSU Next: switch from dev builds to the official stable v3.4.2 release, so the manager APK from GitHub releases works without the UAPI warning
+- SuSFS: update to the latest stable 2.3.0 revision (e30f1502), including the priority UID filter and fixes
+- FuxiParts: add a new HBM-only parts app with manual and automatic HBM controls, ambient-light threshold, timing settings and quick settings tiles
+- FuxiParts: fix Auto HBM exit hysteresis and prevent stale manual brightness from being restored
+- Dolby Atmos: sync with the latest LunarisDolby upstream; refreshed Material 3 UI, compact navigation, more translations and profile/effect/AutoEQ fixes
+- Update the display power profile entries for Android 17
+
 25.10.2026:
 - Bluetooth: restore LHDC support, falling back to the software encoder when the hardware path is unavailable
 - Fix the rounded corner overlay to match the stock display shape
