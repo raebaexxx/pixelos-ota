@@ -2,9 +2,8 @@
 
 OTA feed and changelogs for **PixelOS on Xiaomi 13 (fuxi)**.
 
-Consumed by the PixelOS Updater app (`net.pixelos.ota`). The app builds its URLs from two
-resources in `packages/apps/Updater/app/src/main/res/values/strings.xml`, which in this fork
-point here:
+Consumed by the PixelOS Updater app (`net.pixelos.ota`). The fuxi device tree ships a static RRO,
+`device/xiaomi/fuxi/overlay/UpdaterOverlayFuxi`, that overrides the app's two URL resources:
 
 ```text
 https://raw.githubusercontent.com/raebaexxx/pixelos-ota/{branch}/API/updater/{device}.json
@@ -36,11 +35,13 @@ them yourself.
 ### 1. Build and upload
 
 ```bash
-export IS_OFFICIAL=true
 . b*/env*
 breakfast fuxi user
 m pixelos -j$(nproc)
 ```
+
+`IS_OFFICIAL := true` is set in `device/xiaomi/fuxi/custom_fuxi.mk`, so the Updater app and the
+`net.pixelos.build_type=ci` property are always included in fuxi builds.
 
 Take the release name from the build output, `Package Complete:
 out/target/product/fuxi/PixelOS_fuxi-<version>.zip`, and upload exactly that file. The name in the
