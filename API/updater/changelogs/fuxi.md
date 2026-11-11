@@ -1,5 +1,19 @@
 # PixelOS for Xiaomi 13 (fuxi)
 
+11.11.2026:
+- November 2026 security patch (2026-11-01): fixes for a lock-screen bypass through the default USB functions, a shell command vulnerability in the window manager, background foreground-service starts and permission checks for activities inside a task
+- Play Integrity: reworked spoofing stack; Device and Strong Integrity can pass again with a valid keybox. Configure it in Settings > System > Developer options > Spoofing (Keybox, Play Integrity Fix, advanced Play Store fingerprint spoofing)
+- Updater: sync with the current PixelOS Updater; support for incremental OTA feeds, update checks when the app opens, fixed changelog loading, and removal of the obsolete Certified properties section
+- OTA: the fuxi feed and changelog URLs now live in a device overlay, and fuxi builds are always tagged as official
+- Kernel: update to Linux 5.15.223 (LineageOS 24.0); KernelSU Next v3.4.2 stable and SuSFS 2.3.0 are retained
+- Update the shared sm8550 vendor blobs and firmware from HyperOS OS3.0.312.0.WMBCNXM
+- Update CarrierConfig from OS3.0.304.0.WMKCNXM and use the stock signal-strength thresholds, so the bars match stock for LTE and NR
+- Dolby Atmos: use the fuxi stock tuning instead of the Nuwa tuning, fixing IEQ, virtualization and volume levels
+- Recovery: load the touchscreen driver in recovery, so touch works there
+- Camera: remove the old MiuiCamera and Google Camera inherit entries and keep the current MiuiCamera
+- Remove the deprecated ATFWD and irsc_util services, unused properties and the unused AVB key setup
+- Full platform changelog: https://blog.pixelos.net/blogs/2026-11-09-November-Update
+
 30.10.2026:
 - KernelSU Next: switch from dev builds to the official stable v3.4.2 release, so the manager APK from GitHub releases works without the UAPI warning
 - SuSFS: update to the latest stable 2.3.0 revision (e30f1502), including the priority UID filter and fixes
